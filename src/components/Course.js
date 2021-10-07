@@ -1,6 +1,6 @@
 import { hasConflict, toggle, getCourseTerm } from "../utilities/times";
 import { timeParts } from "../utilities/times";
-import { setData } from "../utilities/firebase";
+import { setData, useUserState } from "../utilities/firebase";
 
 export const getCourseNumber = (course) => course.id.slice(1, 4);
 
@@ -25,6 +25,7 @@ const reschedule = async (course, meets) => {
 export const Course = ({ course, selected, setSelected }) => {
   const isSelected = selected.includes(course);
   const isDisabled = !isSelected && hasConflict(course, selected);
+  const [user] = useUserState();
   const style = {
     backgroundColor: isDisabled
       ? "lightgrey"
@@ -37,7 +38,7 @@ export const Course = ({ course, selected, setSelected }) => {
       className="card m-1 p-2"
       style={style}
       onClick={isDisabled ? null : () => setSelected(toggle(course, selected))}
-      onDoubleClick={() => reschedule(course, getCourseMeetingData(course))}
+      onDoubleClick={!user? null :() => reschedule(course, getCourseMeetingData(course))}
     >
       <div className="card-body">
         <div className="card-title">
